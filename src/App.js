@@ -22,8 +22,8 @@ const WinningCombination = [
 	[6, 7, 8]
 ]
 
-const EMPTYBOARD = [
-  [],[],[],[],[],[],[],[],[]
+const BOARD_VALUES = [
+  "X", 1, "O", "O", "O", "X", 6, "X", 8
 ]
 
 
@@ -41,8 +41,14 @@ class App extends React.Component {
     this.startGame()
   }
 
+  preencher(){
+    debugger
+    this.setState({board: BOARD_VALUES})
+  }
+
   startGame(){
     this.setState({
+      stopped: false,
       board: Array.from(Array(9).keys())
     })  
   }
@@ -74,6 +80,7 @@ class App extends React.Component {
   }
 
   minimax(newBoard, player) {
+    debugger
     var emptyCells = this.emptyCells();
   
     if (this.checkWin(newBoard, PLAYER)) {
@@ -129,12 +136,14 @@ class App extends React.Component {
   }
 
   chooseWinner(winner){
+    this.setState({stopped: true})
     alert(winner)
-    this.startGame()
+    // this.startGame()
   }
 
   turn(cell, player) {
-    console.log(cell, "---", player)
+    console.log("Turno")
+    console.log("celula:",cell, "jogador:", player)
     this.setState(state => {
       const board = state.board.map((item, i) => {
         if (i === cell) {
@@ -158,14 +167,18 @@ class App extends React.Component {
   }
 
   checkWin(board, player) {
-    let plays = board.reduce((a,e,i)=>
+    let plays = board.reduce((a,e,i)=> 
       (e === player) ? a.concat(i) : a,[]
     );
     let gameWin = null;
+    console.log("jogadas:",plays, "jogador:", player, "tabuleiro atual:", board)
     // console.log(plays)
+    console.log("For em combinaçao de vitorias do jogador:" , player)
     for (let [index, win] of WinningCombination.entries()) {
+      console.log( "index:" ,index, "-", "Possiveis vitorias:", win )
       if (win.every(elem => plays.indexOf(elem) > -1)) {
         gameWin = {index: index, player: player};
+        console.log("vitoria :", gameWin)
         break;
       }
     }
@@ -232,6 +245,9 @@ class App extends React.Component {
         </div>
       <div>
         <h3 onClick={()=>this.startGame()}>{"NOVO JOGO"}</h3>
+      </div>
+      <div>
+        <h3 onClick={()=>this.preencher()}>{"PREENCHER"}</h3>
       </div>
         
       </div>
